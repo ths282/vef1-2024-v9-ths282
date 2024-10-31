@@ -27,6 +27,9 @@ function parseResponse(data) {
     /** @type string */
     const _time = time[i];
 
+    /** @type string */
+    const formattedTime = _time.split('T')[1];
+
     /** @type number */
     const _pre = precipitation[i];
 
@@ -35,7 +38,7 @@ function parseResponse(data) {
 
     /** @type Forecast */
     const forecast = {
-      time: _time,
+      time: formattedTime,
       precipitation: _pre,
       temperature: _temp,
     };
