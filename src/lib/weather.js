@@ -60,7 +60,6 @@ export async function weatherSearch(lat, lng) {
   // Querystring sem við viljum senda með leit
   // latitude={lat}&longitude={lng}}&hourly=temperature_2m,precipitation&timezone=GMT&forecast_days=1
 
-  // TODO útfæra
   // Hér ætti að nota URL og URLSearchParams
   const url = new URL(API_URL);
   const querystring = new URLSearchParams({

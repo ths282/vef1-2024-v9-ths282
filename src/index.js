@@ -123,8 +123,7 @@ function renderError(error) {
  */
 function renderLoading() {
   renderIntoResultsContent(
-    el("section", {}, el("h2", {}, "Niðurstöður"), 
-    el("p", {}, "Leita..."))
+    el("section", {}, el("h2", {}, "Niðurstöður"), el("p", {}, "Leita..."))
   );
 }
 
@@ -152,7 +151,33 @@ async function onSearch(location) {
  * Biður notanda um leyfi gegnum vafra.
  */
 async function onSearchMyLocation() {
-  // TODO útfæra
+  try {
+    const position = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+
+    const crd = {
+      title: "Þín staðsetning",
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+    };
+
+    onSearch(crd);
+  } catch (error) {
+    if (error.code === error.PERMISSION_DENIED) {
+      renderIntoResultsContent(
+        el(
+          "section",
+          {},
+          el("h2", {}, "Niðurstöður"),
+          el("p", {}, "Gat ekki sótt staðsetningu.")
+        )
+      );
+    } else {
+      // Höndlar aðrar villur
+      renderError(error);
+    }
+  }
 }
 
 /**
@@ -220,10 +245,15 @@ function render(container, locations, onSearch, onSearchMyLocation) {
   locationsElement.appendChild(el("h2", {}, `Staðsetningar`));
   locationsElement.appendChild(locationsListElement);
 
+  // Búa til "Mín staðsetning" takkann
+  const liButtonElement = renderLocationButton("Mín staðsetning", () => {
+    onSearchMyLocation();
+  });
+  locationsListElement.appendChild(liButtonElement);
+
   // <div class="locations"><ul class="locations__list"><li><li><li></ul></div>
   for (const location of locations) {
     const liButtonElement = renderLocationButton(location.title, () => {
-      console.log("Halló!!", location);
       onSearch(location);
     });
     locationsListElement.appendChild(liButtonElement);
